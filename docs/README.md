@@ -1,7 +1,7 @@
 Tools - Repository for several aditional tools..
 ---
 
-ARCH report, Compiler flags for that arch, Cluster check when you have more than one Cluster type( BIG.little ), etc..
+ARCH report, Compiler flags for that arch, Cluster check when you have more than one Cluster type( big.LITTLE ), etc..
 
 #### Table of contents
 * [Characteristics](#characteristics)

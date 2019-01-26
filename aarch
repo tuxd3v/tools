@@ -4,17 +4,26 @@ CPUS = {}
 ROLE = {}
   ROLE.big    = {}
   ROLE.little = {}
+    -- 0xc0f
     ROLE.big    [ "0xc0f" ]  = { "cortex-a15" , "armv7-a"      }
+    -- 0xc0e
     ROLE.big    [ "0xc0e" ]  = { "cortex-a17", "armv7-a"       }
+    -- 0xd07
     ROLE.big    [ "0xd07" ]  = { "cortex-a57", "armv8-a+crc"   }
-    ROLE.big    [ "0xd08" ]  = { "cortex-a72", ""              }
-    ROLE.big    [ "0xd09" ]  = { "cortex-a73", ""              }
-    ROLE.big    [ "0xd0a" ]  = { "cortex-a75", ""              }
+    -- 0xd08
+    ROLE.big    [ "0xd08" ]  = { "cortex-a72", "armv8-a+crc"   }
+    -- 0xd09
+    ROLE.big    [ "0xd09" ]  = { "cortex-a73", "armv8-a+crc"   }
+    -- 0xd0a
+    ROLE.big    [ "0xd0a" ]  = { "cortex-a75", "armv8.2-a"     }
+    -- 0xc07
     ROLE.little [ "0xc07" ]  = { "cortex-a7",  "armv7-a"       }
+    -- 0xd04
     ROLE.little [ "0xd04" ]  = { "cortex-a35", "armv8-a"       }
+    -- 0xd03
     ROLE.little [ "0xd03" ]  = { "cortex-a53", "armv8-a+crc"   }
-    ROLE.little [ "0xd0f" ]  = { "cortex-a55", "armv8.2-a"     }
-    ROLE.little [ "0xd05" ]  = { "cortex-a53", "armv8-a+crc"   }
+    -- 0xd05
+    ROLE.little [ "0xd05" ]  = { "cortex-a55", "armv8.2-a"     }
 
 -- Manufacturer Implementer ID
 idImplementer={
@@ -95,39 +104,27 @@ function Initialize()
 			CPUS[ snr ].nr = snr
 		end
 		aux = string.match( line, "^model name[%s]+:[%s]+([%g%s]+)" )
-		if aux ~= nil then
-			CPUS[ snr ].name = aux
-		end
+		if aux ~= nil then CPUS[ snr ].name = aux; end
 		aux = string.match( line, "^Features[%s]+:[%s]+([%g%s]+)" )
-		if aux ~= nil then
-			CPUS[ snr ].features = aux
-		end
+		if aux ~= nil then CPUS[ snr ].features = aux; end
 		aux = string.match( line, "^CPU implementer[%s]+:[%s]+0x([%w]+[^%s])$" )
-		if aux ~= nil then
-			CPUS[ snr ].implementer	= ( tonumber( aux, 16 ) << 24 )
-		end
+		if aux ~= nil then CPUS[ snr ].implementer = ( tonumber( aux, 16 ) << 24 ); end
 		aux = string.match( line, "^CPU architecture[%s]*:[%s]*([%d]+)" )
-		if aux ~= nil then
-			CPUS[ snr ].arch = aux
-		end
+		if aux ~= nil then CPUS[ snr ].arch = aux; end
 		aux = string.match( line, "^CPU variant[%s]*:[%s]*0x([%w]+)" )
-		if aux ~= nil then
-			CPUS[ snr ].variant = tonumber( aux, 16 )
-		end
+		if aux ~= nil then CPUS[ snr ].variant = tonumber( aux, 16 ); end
 		aux = string.match( line, "^CPU part[%s]*:[%s]+0x([%w]+)" )
-		if aux ~= nil then
-			CPUS[ snr ].part = tonumber( aux, 16 )
-		end
+		if aux ~= nil then CPUS[ snr ].part = tonumber( aux, 16 ); end
 		aux = string.match( line, "^CPU revision[%s]*:[%s]+([%d]+)" )
-		if aux ~= nil then
-			CPUS[ snr ].revision = aux
-		end
+		if aux ~= nil then CPUS[ snr ].revision = aux; end
 	end
 end
 
 function toString()
-	for i,t in pairs( CPUS ) do
-		for k,v in pairs( t ) do
+	for i,t in pairs( CPUS )
+	do
+		for k,v in pairs( t )
+		do
 			print( "Core " .. i .. " : " .. k .. " = " .. v )		
 		end
 	end
