@@ -49,7 +49,7 @@ manIdpart = {
 	{ mask = 0xff00fff0, val = 0x4100d080, id = "Cortex-A72" },
 	{ mask = 0xff00fff0, val = 0x4100d090, id = "Cortex-A73" },
 	{ mask = 0xff00fff0, val = 0x4100d0a0, id = "Cortex-A75" },
-	{ mask = 0xff00fff0, val = 0x4100d0f0, id = "Cortex-A55" },
+	{ mask = 0xff00fff0, val = 0x4100d050, id = "Cortex-A55" },
 	-- Broadcom
 	{ mask = 0xff00fff0, val = 0x42001000, id = "Brahma-B53" },
 	{ mask = 0xff00fff0, val = 0x42005160, id = "ThunderX2"  },
