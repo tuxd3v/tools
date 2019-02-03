@@ -1,32 +1,50 @@
-#! /usr/bin/lua
+#! /usr/bin/env lua
 
-CPUS = {}
-MACHINE = {}
-  MACHINE.big    = {}
-  MACHINE.LITTLE = {}
-    -- 0xc0f
-    MACHINE.big    [ 3087 ]  = { tune = "cortex-a15" , arch = "armv7-a"      }
-    -- 0xc0e
-    MACHINE.big    [ 3086 ]  = { tune = "cortex-a17", arch = "armv7-a"       }
-    -- 0xd07
-    MACHINE.big    [ 3335 ]  = { tune = "cortex-a57", arch = "armv8-a+crc"   }
-    -- 0xd08
-    MACHINE.big    [ 3336 ]  = { tune = "cortex-a72", arch = "armv8-a+crc"   }
-    -- 0xd09
-    MACHINE.big    [ 3337 ]  = { tune = "cortex-a73", arch = "armv8-a+crc"   }
-    -- 0xd0a
-    MACHINE.big    [ 3338 ]  = { tune = "cortex-a75", arch = "armv8.2-a"     }
-    -- 0xc07
-    MACHINE.LITTLE [ 3079 ]  = { tune = "cortex-a7",  arch = "armv7-a"       }
-    -- 0xd04
-    MACHINE.LITTLE [ 3332 ]  = { tune = "cortex-a35", arch = "armv8-a+crc"   }
-    -- 0xd03
-    MACHINE.LITTLE [ 3331 ]  = { tune = "cortex-a53", arch = "armv8-a+crc"   }
-    -- 0xd05
-    MACHINE.LITTLE [ 3333 ]  = { tune = "cortex-a55", arch = "armv8.2-a"     }
 
--- Manufacturer Implementer ID
-idImplementer={
+if _VERSION ~= "Lua 5.3" then
+	print( _VERSION  )
+	print( "Please install Lua >=5.3" )
+	print( "" )
+	os.exit( 1 )
+else
+	if #arg <= 0 then
+		print( "Use :" )
+		print( arg[ 0 ] .. " < cpushow | march | mtune >" )
+		print( "" )
+		os.exit( 1 )
+	end
+end
+
+local CPUINFO
+local CPUS = {}
+local MACHINE = {}
+	MACHINE.big = {}
+	MACHINE.LITTLE = {}
+		-- 0xc09
+		MACHINE.big[ 3081 ]    = { tune = "cortex-a9",  arch = "armv7-a"    }
+		-- 0xc0f
+		MACHINE.big[ 3087 ]    = { tune = "cortex-a15", arch = "armv7-a"    }
+		-- 0xc0e
+		MACHINE.big[ 3086 ]    = { tune = "cortex-a17", arch = "armv7-a"    }
+		-- 0xd07
+		MACHINE.big[ 3335 ]    = { tune = "cortex-a57", arch = "armv8-a+crc"}
+		-- 0xd08
+		MACHINE.big[ 3336 ]    = { tune = "cortex-a72", arch = "armv8-a+crc"}
+		-- 0xd09
+		MACHINE.big[ 3337 ]    = { tune = "cortex-a73", arch = "armv8-a+crc"}
+		-- 0xd0a
+		MACHINE.big[ 3338 ]    = { tune = "cortex-a75", arch = "armv8.2-a"  }
+		-- 0xc07
+		MACHINE.LITTLE[ 3079 ] = { tune = "cortex-a7",  arch = "armv7-a"    }
+		-- 0xd04
+		MACHINE.LITTLE[ 3332 ] = { tune = "cortex-a35", arch = "armv8-a+crc"}
+		-- 0xd03
+		MACHINE.LITTLE[ 3331 ] = { tune = "cortex-a53", arch = "armv8-a+crc"}
+		-- 0xd05
+		MACHINE.LITTLE[ 3333 ] = { tune = "cortex-a55", arch = "armv8.2-a"  }
+
+-- Implementer Manufacturer ID
+local manIdimplementer = {
 	{ mask = 0xff000000, val = 0x41000000, id = "ARM"           },
 	{ mask = 0xff000000, val = 0x42000000, id = "Broadcom"      },
 	{ mask = 0xff000000, val = 0x43000000, id = "Cavium"        },
@@ -35,11 +53,12 @@ idImplementer={
 	{ mask = 0xff000000, val = 0x50000000, id = "Applied Micro" },
 	{ mask = 0xff000000, val = 0x51000000, id = "Qualcomm"      },
 	{ mask = 0xff000000, val = 0x53000000, id = "Samsung"       },
-	{ mask = 0xff000000, val = 0x61000000, id = "Apple"         },
+	{ mask = 0xff000000, val = 0x61000000, id = "Apple"         }
 }
--- Manufacturer Part ID
-manIdpart = {
+-- Part Manufacturer ID
+local manIdpart = {
 	-- ARM
+	{ mask = 0xff00fff0, val = 0x4100c090, id = "Cortex-A9"  },
 	{ mask = 0xff00fff0, val = 0x4100c070, id = "Cortex-A7"  },
 	{ mask = 0xff00fff0, val = 0x4100c0f0, id = "Cortex-A15" },
 	{ mask = 0xff00fff0, val = 0x4100c0e0, id = "Cortex-A17" },
@@ -87,7 +106,7 @@ manIdpart = {
 --- Get CPU Information
 --
 function getCpuinfo()
-	local handle = io.open( "/proc/cpuinfo", "r")
+	 handle = io.open( "/proc/cpuinfo", "r")
 	if ( handle ~= nil )
 	then
 		CPUINFO = handle:read( "*a" )
@@ -97,11 +116,11 @@ end
 ----
 --- Initialize CPUS content
 --
-function Initialize()
-	local aux,snr
+function initialize()
+	local snr
 	for line in string.gmatch( CPUINFO, "[^%c]+[^\r\n\r\n]+" )
 	do
-		aux = string.match( line, "^processor[%s]+:[%s]+([%d]+)$" )
+		local aux = string.match( line, "^processor[%s]+:[%s]+([%d]+)$" )
 		if aux ~= nil then
 			snr = aux
 			CPUS[ snr ] = {}
@@ -122,104 +141,107 @@ function Initialize()
 		aux = string.match( line, "^CPU revision[%s]*:[%s]+([%d]+)" )
 		if aux ~= nil then CPUS[ snr ].revision = aux; end
 	end
-end
-----
---- Print CPUS content
---
-function toString()
-	for i,t in pairs( CPUS )
-	do
-		for k,v in pairs( t )
-		do
-			print( "Core " .. i .. " : " .. k .. " = " .. v )		
-		end
-	end
-end
-----
---- Get machine-option arch
---
-function getMarch()
-	local march
-	local arch = {
-		big = {},
-		LITTLE = {}
-	}
-	for i,c in pairs( CPUS )
-	do
-		for k,m in pairs( MACHINE.big )
-		do		
-			if c.part == k and arch.big[ k ] ~= m.arch
-			then
-				arch.big[ k ]	= m.arch
-			end	
-		end
-		for k,m in pairs( MACHINE.LITTLE )
-		do
-			if c.part == k and arch.LITTLE[ k ] ~= m.arch
-			then
-				arch.LITTLE[ k ] = m.arch
-			end
-		end
-	end
-	for k,m in pairs( arch.big )
-	do
-		march = m
-	end
-	for k,m in pairs( arch.LITTLE )
-	do
-		if march ~= m then
-			march = m
-		end	
-	end
-	print( march )
-end
-----
---- Get machine-option tune
---
-function getMtune()
-	local mtune
-	local tune = {
-		big = {},
-		LITTLE = {}
-	}
-	for i,c in pairs( CPUS )
-	do
-		for k,m in pairs( MACHINE.big )
-		do		
-			if c.part == k and tune.big[ k ] ~= m.tune
-			then
-				tune.big[ k ]	= m.tune
-			end	
-		end
-		for k,m in pairs( MACHINE.LITTLE )
-		do
-			if c.part == k and tune.LITTLE[ k ] ~= m.tune
-			then
-				tune.LITTLE[ k ] = m.tune
-			end
-		end
-	end
-	for k,m in pairs( tune.LITTLE )
-	do
-		mtune = m
-	end
-	for k,m in pairs( tune.big )
-	do
-		if mtune ~= nil then
-			mtune = m .. "." .. mtune
-		else
-			mtune = m
-		end
-	end
-	print( mtune )
+	CPUINFO = nil
 end
 
-
+----
 ---- MAIN
---
-getCpuinfo()
-Initialize()
-getMtune()
-getMarch()
+---
 
+-- Get CPU Information to CPUINFO string
+getCpuinfo()
+-- Parse CPUINFO string and fullfill CPUS table 
+initialize()
+
+local switch = {
+	---
+	--  Print CPUS content
+	cpushow = function ()
+		for i,t in pairs( CPUS )
+		do
+			for k,v in pairs( t )
+			do
+				print( "Core " .. i .. " : " .. k .. " = " .. v )		
+			end
+		end
+	end,
+	---
+	--  Get machine-option arch
+	march = function ()
+		local machinearch
+		local arch = {
+			big = {},
+			LITTLE = {}
+		}
+		for i,c in pairs( CPUS )
+		do
+			for k,m in pairs( MACHINE.big )
+			do		
+				if c.part == k and arch.big[ k ] ~= m.arch
+				then
+					arch.big[ k ]	= m.arch
+				end	
+			end
+			for k,m in pairs( MACHINE.LITTLE )
+			do
+				if c.part == k and arch.LITTLE[ k ] ~= m.arch
+				then
+					arch.LITTLE[ k ] = m.arch
+				end
+			end
+		end
+		for k,m in pairs( arch.big )
+		do
+			machinearch = m
+		end
+		for k,m in pairs( arch.LITTLE )
+		do
+			if machinearch ~= m then
+				machinearch = m
+			end	
+		end
+		print( machinearch )
+	end,
+	---
+	--  Get machine-option tune
+	mtune = function ()
+		local machinetune
+		local tune = {
+			big = {},
+			LITTLE = {}
+		}
+		for i,c in pairs( CPUS )
+		do
+			for k,m in pairs( MACHINE.big )
+			do		
+				if c.part == k and tune.big[ k ] ~= m.tune
+				then
+					tune.big[ k ]	= m.tune
+				end	
+			end
+			for k,m in pairs( MACHINE.LITTLE )
+			do
+				if c.part == k and tune.LITTLE[ k ] ~= m.tune
+				then
+					tune.LITTLE[ k ] = m.tune
+				end
+			end
+		end
+		for k,m in pairs( tune.LITTLE )
+		do
+			machinetune = m
+		end
+		for k,m in pairs( tune.big )
+		do
+			if machinetune ~= nil then
+				machinetune = m .. "." .. machinetune
+			else
+				machinetune = m
+			end
+		end
+		print( machinetune )
+	end
+}
+
+switch[ arg[ 1 ] ]()
 
