@@ -34,6 +34,8 @@ local MACHINE = {}
 		MACHINE.big[ 3337 ]    = { tune = "cortex-a73", arch = "armv8-a+crc"}
 		-- 0xd0a
 		MACHINE.big[ 3338 ]    = { tune = "cortex-a75", arch = "armv8.2-a"  }
+		-- 0xb76
+		MACHINE.LITTLE[ 2934 ] = { tune = "arm1176jzf-s",  arch = "armv6"   }
 		-- 0xc07
 		MACHINE.LITTLE[ 3079 ] = { tune = "cortex-a7",  arch = "armv7-a"    }
 		-- 0xd04
