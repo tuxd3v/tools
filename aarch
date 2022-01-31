@@ -22,10 +22,10 @@ local MACHINE = {}
 	MACHINE.LITTLE = {}
 		-- 0xc09
 		MACHINE.big[ 3081 ]    = { tune = "cortex-a9",  arch = "armv7-a"    }
-		-- 0xc0f
-		MACHINE.big[ 3087 ]    = { tune = "cortex-a15", arch = "armv7-a"    }
 		-- 0xc0e
 		MACHINE.big[ 3086 ]    = { tune = "cortex-a17", arch = "armv7-a"    }
+		-- 0xc0f
+		MACHINE.big[ 3087 ]    = { tune = "cortex-a15", arch = "armv7-a"    }
 		-- 0xd07
 		MACHINE.big[ 3335 ]    = { tune = "cortex-a57", arch = "armv8-a+crc"}
 		-- 0xd08
@@ -69,10 +69,10 @@ local manIdimplementer = {
 local manIdpart = {
 	-- ARM
 	{ mask = 0xff00fff0, val = 0x4100b760, id = "arm1176jzf-s"  },
-	{ mask = 0xff00fff0, val = 0x4100c090, id = "Cortex-A9"     },
 	{ mask = 0xff00fff0, val = 0x4100c070, id = "Cortex-A7"     },
-	{ mask = 0xff00fff0, val = 0x4100c0f0, id = "Cortex-A15"    },
+	{ mask = 0xff00fff0, val = 0x4100c090, id = "Cortex-A9"     },
 	{ mask = 0xff00fff0, val = 0x4100c0e0, id = "Cortex-A17"    },
+	{ mask = 0xff00fff0, val = 0x4100c0f0, id = "Cortex-A15"    },
 	{ mask = 0xff00fff0, val = 0x4100d030, id = "Cortex-A53"    },
 	{ mask = 0xff00fff0, val = 0x4100d040, id = "Cortex-A35"    },
 	{ mask = 0xff00fff0, val = 0x4100d050, id = "Cortex-A55"    },
